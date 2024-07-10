@@ -12,10 +12,10 @@ steps:
     args: [ '-c', 'gcloud auth configure-docker --quiet' ]
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'cloud-428816/k8s/container1:latest', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'cloud-428816/k8s/container1:latest']
+    args: ['push', 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest']
 
 images:
-  - 'cloud-428816/k8s/container1:latest'
+  - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
