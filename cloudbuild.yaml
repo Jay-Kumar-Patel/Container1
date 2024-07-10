@@ -1,3 +1,7 @@
+# Global options for the build
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   - name: 'maven:3.6-jdk-11'
     entrypoint: 'bash'
