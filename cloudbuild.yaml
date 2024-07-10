@@ -3,7 +3,7 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'maven:3.6-jdk-11'
+  - name: 'maven:3.8.4-jdk-17'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -17,7 +17,8 @@ steps:
       - 'build'
       - '-t'
       - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
-      - '.'
+      - '--build-arg'
+      - 'JAR_FILE=/workspace/Container1/target/*.jar'  # Adjust path as per your Maven output
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
