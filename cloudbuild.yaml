@@ -1,35 +1,30 @@
 steps:
-  - build
-  - publish
+  - name: 'maven:3.6-jdk-11'  # Use a Maven Docker image to run the build
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mvn clean package
+        cp -R Container1/target /workspace  # Copy artifacts to the workspace directory
 
-image: docker:latest
+  - name: 'gcr.io/cloud-builders/docker'  # Use the Docker builder image to build the Docker image
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
+      - '.'
 
-services:
-  - docker:dind
+  - name: 'gcr.io/cloud-builders/docker'  # Push the Docker image to the Artifact Registry
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
 
-variables:
-  GCP_PROJECT: cloud-428816
-  GKE_CLUSTER: k8s-assignment
-  GKE_ZONE: us-central1-c
-  KUBERNETES_NAMESPACE: default
-  ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/cloud-428816/k8s
+images:
+  - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
 
-before_script:
-  - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
-  - gcloud config set project $GCP_PROJECT
-  - gcloud config set compute/zone $GKE_ZONE
-  - gcloud auth configure-docker $ARTIFACT_REGISTRY
-
-clean:
-  stage: build
-  script:
-    - mvn clean package 
-  artifacts:
-    paths:
-      - Container1/target
-
-build:
-  stage: build
-  script:
-    - docker build -t $ARTIFACT_REGISTRY/container1:latest .
-    - docker push $ARTIFACT_REGISTRY/container1:latest
+substitutions:
+  _GCP_PROJECT: 'cloud-428816'
+  _GKE_CLUSTER: 'k8s-assignment'
+  _GKE_ZONE: 'us-central1-c'
+  _KUBERNETES_NAMESPACE: 'default'
+  _ARTIFACT_REGISTRY: 'us-central1-docker.pkg.dev/cloud-428816/k8s'
