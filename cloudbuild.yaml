@@ -1,24 +1,21 @@
-# Global options for the build
-options:
-  logging: CLOUD_LOGGING_ONLY
-
 steps:
-  - name: 'maven:3.6-jdk-11'  # Use a Maven Docker image to run the build
+  - name: 'maven:3.6-jdk-11'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         mvn clean package
-        cp -R Container1/target /workspace  # Copy artifacts to the workspace directory
+        mkdir -p /workspace/Container1/target
+        cp -R target/* /workspace/Container1/target
 
-  - name: 'gcr.io/cloud-builders/docker'  # Use the Docker builder image to build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
       - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
       - '.'
 
-  - name: 'gcr.io/cloud-builders/docker'  # Push the Docker image to the Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
