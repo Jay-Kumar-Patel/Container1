@@ -3,34 +3,11 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'maven:3.8.4-jdk-17'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        mvn clean package
-        mkdir -p /workspace/Container1/target
-        cp -R target/* /workspace/Container1/target
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'cloud-428816/k8s/container1:latest', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-      - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
-      - '--build-arg'
-      - 'JAR_FILE=/workspace/Container1/target/*.jar'  # Adjust path as per your Maven output
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
+    args: ['push', 'cloud-428816/k8s/container1:latest']
 
 images:
-  - 'us-central1-docker.pkg.dev/cloud-428816/k8s/container1:latest'
-
-substitutions:
-  _GCP_PROJECT: 'cloud-428816'
-  _GKE_CLUSTER: 'k8s-assignment'
-  _GKE_ZONE: 'us-central1-c'
-  _KUBERNETES_NAMESPACE: 'default'
-  _ARTIFACT_REGISTRY: 'us-central1-docker.pkg.dev/cloud-428816/k8s'
+  - 'cloud-428816/k8s/container1:latest'
