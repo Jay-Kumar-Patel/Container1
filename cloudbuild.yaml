@@ -1,0 +1,35 @@
+steps:
+  - build
+  - publish
+
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  GCP_PROJECT: cloud-428816
+  GKE_CLUSTER: k8s-assignment
+  GKE_ZONE: us-central1-c
+  KUBERNETES_NAMESPACE: default
+  ARTIFACT_REGISTRY: us-central1-docker.pkg.dev/cloud-428816/k8s
+
+before_script:
+  - gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+  - gcloud config set project $GCP_PROJECT
+  - gcloud config set compute/zone $GKE_ZONE
+  - gcloud auth configure-docker $ARTIFACT_REGISTRY
+
+clean:
+  stage: build
+  script:
+    - mvn clean package 
+  artifacts:
+    paths:
+      - Container1/target
+
+build:
+  stage: build
+  script:
+    - docker build -t $ARTIFACT_REGISTRY/container1:latest .
+    - docker push $ARTIFACT_REGISTRY/container1:latest
