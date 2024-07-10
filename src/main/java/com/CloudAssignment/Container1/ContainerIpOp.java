@@ -25,6 +25,8 @@ public class ContainerIpOp {
     @PostMapping("store-file")
     public ResponseEntity<Map<String, Object>> storeFile(@RequestBody Map<Object, Object> input){
 
+        System.out.println("CI Testing");
+
         Map<String, Object> output = new HashMap<>();
 
         checkFile(input, output);
