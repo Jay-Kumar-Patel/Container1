@@ -7,6 +7,10 @@ steps:
     entrypoint: 'bash'
     args: [ '-c', 'mvn clean package -DskipTests' ]
 
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    entrypoint: 'bash'
+    args: [ '-c', 'gcloud auth configure-docker --quiet' ]
+
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'cloud-428816/k8s/container1:latest', '.']
 
