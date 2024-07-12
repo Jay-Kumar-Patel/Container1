@@ -26,6 +26,7 @@ public class ContainerIpOp {
     public ResponseEntity<Map<String, Object>> storeFile(@RequestBody Map<Object, Object> input){
 
         System.out.println("Demo Testing");
+        System.out.println("Demo Kubernetes");
 
         Map<String, Object> output = new HashMap<>();
 
